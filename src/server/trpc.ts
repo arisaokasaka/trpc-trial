@@ -8,7 +8,7 @@
  * @see https://trpc.io/docs/v10/procedures
  */
 
-import { initTRPC } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 // import { transformer } from '@/utils/transformer';
 import { Context } from './context';
 
@@ -38,6 +38,21 @@ export const router = t.router;
  * @see https://trpc.io/docs/v10/procedures
  **/
 export const publicProcedure = t.procedure;
+
+const isAuthed = t.middleware(({ next, ctx }) => {
+  if (!ctx.cookie['test-cookie']) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+    });
+  }
+  return next({
+    ctx: {
+      cookie: ctx.cookie
+    },
+  });
+});
+
+export const protectedProcedure = t.procedure.use(isAuthed)
 
 /**
  * @see https://trpc.io/docs/v10/middlewares
