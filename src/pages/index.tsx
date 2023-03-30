@@ -9,7 +9,9 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
   const { data: healthCheckData, isLoading } = trpc.healthcheck.useQuery()
   const { data: authHealthCheckData } = trpc['auth-healthcheck'].useQuery()
-  
+  const { data: repeatData } = trpc.sample.repeat.useQuery({ count: 10 })
+  const { data: reverseData } = trpc.sample.reverse.useQuery({ text: "hello!" })
+
   return (
     <>
       <Head>
@@ -20,7 +22,9 @@ export default function Home() {
         <div className={styles.description}>
           {isLoading && 'loading...'}
           {healthCheckData}
+          {reverseData}
           {authHealthCheckData}
+          {repeatData?.items.map((item) => item)}
           <p>
             Get started by editing&nbsp;
             <code className={styles.code}>src/pages/index.tsx</code>
